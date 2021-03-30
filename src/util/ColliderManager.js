@@ -8,15 +8,15 @@ class ColliderManager {
 
         this.scene.platforms = this.scene.physics.add.staticGroup();                      //Plattformen
 
-        this.scene.touchPlatforms = this.scene.add.group();                               //Kann Plattformen berühren
+        this.scene.touchPlatforms = this.scene.add.group();                               //Kann Plattformen berÃ¼hren
 
-        this.scene.playerProjectiles_Normal = this.scene.add.group();                     //Werden zerstört, wenn Gegner oder Plattform getroffen.
-        this.scene.playerProjectiles_PierceEnemies = this.scene.add.group();              //Durchbohrt Gegner. Werden zerstört, wenn Plattform getroffen.
+        this.scene.playerProjectiles_Normal = this.scene.add.group();                     //Werden zerstÃ¶rt, wenn Gegner oder Plattform getroffen.
+        this.scene.playerProjectiles_PierceEnemies = this.scene.add.group();              //Durchbohrt Gegner. Werden zerstÃ¶rt, wenn Plattform getroffen.
         this.scene.playerProjectiles_PierceAll = this.scene.add.group();                  //Durchbohrt Gegner und Plattformen.
         this.scene.playerProjectiles_Bounce = this.scene.add.group();                     //Projectil prallt von Plattformen ab.
 
-        this.scene.enemyProjectiles_Normal = this.scene.add.group();                      //Werden zerstört, wenn Spieler oder Plattform getroffen.
-        this.scene.enemyProjectiles_PiercePlayer = this.scene.add.group();                //Durchbohrt Spieler. Werden zerstört, wenn Plattform getroffen.
+        this.scene.enemyProjectiles_Normal = this.scene.add.group();                      //Werden zerstÃ¶rt, wenn Spieler oder Plattform getroffen.
+        this.scene.enemyProjectiles_PiercePlayer = this.scene.add.group();                //Durchbohrt Spieler. Werden zerstÃ¶rt, wenn Plattform getroffen.
         this.scene.enemyProjectiles_PierceAll = this.scene.add.group();                   //Durchbohrt Spieler und Plattformen.
 
 
@@ -85,6 +85,7 @@ class ColliderManager {
         //Projectiles - Platforms
         this.scene.physics.add.collider(this.scene.platforms, this.scene.playerProjectiles_Bounce, function (platform, projectile) {
             //destoryProjectile(projectile);
+            console.log("hit");
         });
 
 
