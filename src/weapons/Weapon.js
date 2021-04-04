@@ -4,6 +4,7 @@ class Weapon {
         this.type = null;
         this.attackRate = null;
         this.attackRange = null;
+        this.projectileAmount = null;
         this.ammoGroup = new AmmoGroup(this.scene.scene, 1)
         this.direction = null;
     }
@@ -16,6 +17,7 @@ class Weapon {
                 WeaponConst.ATK_RATE_BLASTER,
                 WeaponConst.VELOCITY_X_BLASTER,
                 WeaponConst.VELOCITY_Y_BLASTER,
+                WeaponConst.PROJECTILE_AMOUNT_BLASTER,
                 WeaponConst.AMMO_GROUP_BLASTER
             );
             console.log("Blaster choosen");
@@ -28,6 +30,7 @@ class Weapon {
                 WeaponConst.ATK_RATE_BLASTER_BIG,
                 WeaponConst.VELOCITY_X_BLASTER_BIG,
                 WeaponConst.VELOCITY_Y_BLASTER_BIG,
+                WeaponConst.PROJECTILE_AMOUNT_BLASTER_BIG,
                 WeaponConst.AMMO_GROUP_BLASTER_BIG
             );
             console.log("BlasterBig choosen");
@@ -40,6 +43,7 @@ class Weapon {
                 WeaponConst.ATK_RATE_GRENADE,
                 WeaponConst.VELOCITY_X_GRENADE,
                 WeaponConst.VELOCITY_Y_GRENADE,
+                WeaponConst.PROJECTILE_AMOUNT_GRENADE,
                 WeaponConst.AMMO_GROUP_GRENADE
             );
             console.log("Grenade choosen");
@@ -52,10 +56,11 @@ class Weapon {
                 WeaponConst.ATK_RATE_GRENADE_BIG,
                 WeaponConst.VELOCITY_X_GRENADE_BIG,
                 WeaponConst.VELOCITY_Y_GRENADE_BIG,
+                WeaponConst.PROJECTILE_AMOUNT_GRENADE_BIG,
                 WeaponConst.AMMO_GROUP_GRENADE_BIG
             );
             console.log("GrenadeBig choosen");
-            this.assignToGroup(this.scene.scene.playerProjectiles_PierceEnemies);
+            this.assignToGroup(this.scene.scene.playerProjectiles_Bounce);
 
         }
         else if (type == 'Laser') {
@@ -64,6 +69,7 @@ class Weapon {
                 WeaponConst.ATK_RATE_LASER,
                 WeaponConst.VELOCITY_X_LASER,
                 WeaponConst.VELOCITY_Y_LASER,
+                WeaponConst.PROJECTILE_AMOUNT_LASER,
                 WeaponConst.AMMO_GROUP_LASER
             );
             console.log("Laser choosen");
@@ -75,19 +81,19 @@ class Weapon {
     }
 
 
-    setUpWeapon(type, attackRate, velocityX, velocityY, ammoGroup ) {
+    setUpWeapon(type, attackRate, velocityX, velocityY, amount, ammoGroup ) {
         this.type = type;
         this.attackRate = attackRate;
         this.velocityX = velocityX;
         this.velocityY = velocityY;
+        this.projectileAmount = amount;
         this.ammoGroup.loadAmmo(ammoGroup);
         //this.scene.scene.enemyProjectiles_Normal.add(this.ammoGroup);
     }
 
 
     fire(x, y, direction) {
-        this.ammoGroup.fire(x, y, direction);
-
+        this.ammoGroup.fire(x, y, direction, this.projectileAmount);
     }
 
 

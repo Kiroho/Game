@@ -8,7 +8,7 @@ var config = {
             gravity: { y: 3000}
         },
     },
-    scene: [ThirdScene,]
+    scene: [ThirdScene,UI]
 
 };
 
@@ -17,3 +17,4 @@ var config = {
 
 var game = new Phaser.Game(config);
 
+var eventEmitter = new Phaser.Events.EventEmitter();

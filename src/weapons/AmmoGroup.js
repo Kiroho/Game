@@ -1,14 +1,20 @@
 class AmmoGroup extends Phaser.Physics.Arcade.Group {
     constructor(scene) {
-        super(scene.physics.world, scene);
+        super(scene.physics.world, scene, { enable: false });
 
     }
 
-    fire(x, y, direction) {
-        const projectile = this.getFirstDead(false);
-        if (projectile) {
-            projectile.fire(x, y, direction);
+    fire(x, y, direction, amount) {
+        if (!amount) {
+            var amount = 1;
         }
+        for (var i = 1; i <= amount; i++) {
+            var projectile = this.getFirstDead(false);
+            if (projectile) {
+                projectile.fire(x, y, direction, i);
+            }
+        }
+        
     }
 
     
@@ -22,20 +28,20 @@ class AmmoGroup extends Phaser.Physics.Arcade.Group {
             this.classtype = BlasterBig;
         }
         else if (ammoIndex == 3) {
-            this.classtype = Granade;
+            this.classtype = Grenade;
         }
         else if (ammoIndex == 4) {
-            this.classtype = Granade;
+            this.classtype = GrenadeBig;
         }
         else if (ammoIndex == 0) {
             this.classtype = Laser;
         }
         this.createMultiple({
             classType: this.classtype,
-            frameQuantity: 20,
+            quantity: 20,
             active: false,
             visible: false,
-            key: ['ballAnim', 'kugel']
+            key: 'kugel'
         })
     }
 
@@ -49,7 +55,10 @@ class Blaster extends Phaser.Physics.Arcade.Sprite {
         super(scene, x, y, 'ballAnim');
         this.dmg = 25;
         this.enemyHit=[];
-        
+
+        scene.add.existing(this);
+        scene.physics.add.existing(this);
+
         //Animation in eigene Klasse auslagern
         this.scene.anims.create({
             key: 'wobble',
@@ -65,6 +74,7 @@ class Blaster extends Phaser.Physics.Arcade.Sprite {
     fire(x, y, direction) {
         this.body.reset(x, y);
         this.body.setGravityY(-3000);
+        this.body.enable = true;
         this.setActive(true);
         this.setVisible(true);
         
@@ -98,12 +108,16 @@ class BlasterBig extends Phaser.Physics.Arcade.Sprite {
         super(scene, x, y, 'kugel');
         this.dmg = 50;
         this.enemyHit = [];
+
+        scene.add.existing(this);
+        scene.physics.add.existing(this);
     }
 
     fire(x, y, direction) {
         this.body.reset(x, y);
         this.setScale(2);
         this.body.setGravityY(-3000);
+        this.body.enable = true;
         this.setActive(true);
         this.setVisible(true);
 
@@ -132,18 +146,23 @@ class BlasterBig extends Phaser.Physics.Arcade.Sprite {
 }
 
 
-class Granade extends Phaser.Physics.Arcade.Sprite {
+class Grenade extends Phaser.Physics.Arcade.Sprite {
     constructor(scene, x, y) {
         super(scene, x, y, 'kugel');
         this.dmg = 20;
         this.enemyHit = [];
         this.bounceCounter = 3;
+
+        scene.add.existing(this);
+        scene.physics.add.existing(this);
         
     }
 
     fire(x, y, direction) {
+        this.bounceCounter = 3;
         this.body.reset(x, y);
         this.body.setGravityY(-1000);
+        this.body.enable = true;
         this.setBounce(1);
         this.setActive(true);
         this.setVisible(true);
@@ -174,6 +193,98 @@ class Granade extends Phaser.Physics.Arcade.Sprite {
 
 }
 
+class GrenadeBig extends Phaser.Physics.Arcade.Sprite {
+    constructor(scene, x, y) {
+        super(scene, x, y, 'kugel');
+        this.dmg = 20;
+        this.enemyHit = [];
+        this.bounceCounter = 5;
+
+        scene.add.existing(this);
+        scene.physics.add.existing(this);
+
+    }
+
+    fire(x, y, direction, amount) {
+        this.bounceCounter = 5;
+        this.body.reset(x, y);
+        this.body.setGravityY(-1000);
+        this.body.enable = true;
+        this.setBounce(1);
+        this.setActive(true);
+        this.setVisible(true);
+
+        if (amount == 1) {
+            this.setVelocityY(WeaponConst.VELOCITY_Y_GRENADE_BIG);
+            if (direction == "left") {
+                this.setVelocityX(WeaponConst.VELOCITY_X_GRENADE_BIG * -1);
+            }
+            else if (direction == "up") {
+                this.setVelocityY(WeaponConst.VELOCITY_Y_GRENADE_BIG * 2);
+                this.setVelocityX(0);
+            }
+            else {
+                this.setVelocityX(WeaponConst.VELOCITY_X_GRENADE_BIG);
+            }
+        }
+        else if (amount == 2) {
+            this.setVelocityY(WeaponConst.VELOCITY_Y_GRENADE_BIG - 70);
+            if (direction == "left") {
+                this.setVelocityX(WeaponConst.VELOCITY_X_GRENADE_BIG * -1);
+            }
+            else if (direction == "up") {
+                this.setVelocityY(WeaponConst.VELOCITY_Y_GRENADE_BIG * 2);
+                this.setVelocityX(-70);
+            }
+            else {
+                this.setVelocityX(WeaponConst.VELOCITY_X_GRENADE_BIG);
+            }
+        }
+        else if (amount == 3) {
+            this.setVelocityY(WeaponConst.VELOCITY_Y_GRENADE_BIG + 70);
+            if (direction == "left") {
+                this.setVelocityX(WeaponConst.VELOCITY_X_GRENADE_BIG * -1);
+            }
+            else if (direction == "up") {
+                this.setVelocityY(WeaponConst.VELOCITY_Y_GRENADE_BIG * 2);
+                this.setVelocityX(70);
+            }
+            else {
+                this.setVelocityX(WeaponConst.VELOCITY_X_GRENADE_BIG );
+            }
+        }
+        else {
+            this.enemyHit = [];
+            this.body.enable = false;
+            this.setActive(false);
+            this.setVisible(false);
+            this.x = 0;
+            this.y = 0;
+        }
+    }
+
+
+
+
+    preUpdate(time, delta) {
+        super.preUpdate(time, delta);
+
+        if (!this.scene.cameras.main.worldView.contains(this.x, this.y)) {
+            this.enemyHit = [];
+            this.setActive(false);
+            this.setVisible(false);
+        }
+    }
+
+}
+
+
+
+
+
+
+
+
 
 
 
@@ -186,11 +297,15 @@ class Laser extends Phaser.Physics.Arcade.Sprite {
         super(scene, x, y, 'kugel');
         this.dmg = 20;
         this.enemyHit = [];
+
+        scene.add.existing(this);
+        scene.physics.add.existing(this);
     }
 
     fire(x, y, direction) {
         this.body.reset(x, y);
         this.body.setGravityY(-3000);
+        this.body.enable = true;
         this.setActive(true);
         this.setVisible(true);
 

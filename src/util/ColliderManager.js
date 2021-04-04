@@ -73,10 +73,13 @@ class ColliderManager {
             }
         });
 
-        //playerProjectiles_Normal====================================================================================================================================
+        //playerProjectiles_Bounce====================================================================================================================================
         //Projectiles - Enemies
         this.scene.physics.add.collider(this.scene.enemyGroup, this.scene.playerProjectiles_Bounce, function (enemy, projectile) {
-            destoryProjectile(projectile);
+            projectile.bounceCounter--;
+            if (projectile.bounceCounter <= 0) {
+                destoryProjectile(projectile);
+            }
             enemy.health -= projectile.dmg;
             if (enemy.health <= 0) {
                 enemy.destroy();
@@ -84,8 +87,10 @@ class ColliderManager {
         });
         //Projectiles - Platforms
         this.scene.physics.add.collider(this.scene.platforms, this.scene.playerProjectiles_Bounce, function (platform, projectile) {
-            //destoryProjectile(projectile);
-            console.log("hit");
+            projectile.bounceCounter--;
+            if (projectile.bounceCounter <= 0) {
+                destoryProjectile(projectile);
+            }
         });
 
 
@@ -98,6 +103,7 @@ class ColliderManager {
         this.scene.physics.add.collider(this.scene.playerGroup, this.scene.enemyProjectiles_Normal, function (player, projectile) {
             destoryProjectile(projectile);
             player.health -= projectile.dmg;
+            eventEmitter.emit('playerHealth', player.health);
             if (player.health <= 0) {
                 player.setVisible(false);
             }
@@ -139,6 +145,8 @@ class ColliderManager {
 
         function destoryProjectile(projectile) {
             projectile.enemyHit = [];
+            //projectile.body.checkCollision.none = true;
+            projectile.body.enable = false;
             projectile.setActive(false);
             projectile.setVisible(false);
             projectile.x = 0;

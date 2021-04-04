@@ -23,7 +23,7 @@ class ThirdScene extends Phaser.Scene {
         this.cameras.main.setBounds(0, 0, 1280 * 2, 720);
         this.physics.world.setBounds(0, 0, 1280 * 2, 720);
 
-        var background = this.add.image(1280, 360, 'background');
+        this.add.image(1280, 360, 'background');
 
         //set Collider
         this.collideManager.setupCollider();
@@ -47,9 +47,9 @@ class ThirdScene extends Phaser.Scene {
 
 
 
-
-
-
+        
+        //UI
+        this.scene.launch('UIScene');
 
         this.cameras.main.startFollow(this.playerOne, true, 0.05, 0.05);
     }
@@ -63,7 +63,9 @@ class ThirdScene extends Phaser.Scene {
 
     }
 
-
+    hello() {
+        console.log("hello");
+    }
 
 
     createPlatforms() {

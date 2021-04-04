@@ -11,6 +11,9 @@ class Player extends Phaser.Physics.Arcade.Sprite {
         this.weaponTwoMain;
         this.weaponTwoSecondary;
         this.weaponInUse = 1;
+        this.weaponCooldown = 5000;
+        this.allowSwitch = true;
+        this.setUIOnce = true;
         scene.add.existing(this);
         scene.physics.add.existing(this);
 
@@ -27,6 +30,17 @@ class Player extends Phaser.Physics.Arcade.Sprite {
     }
 
 
+    setUpUI() {
+
+        eventEmitter.emit('playerHealth', this.health);
+        eventEmitter.emit('weaponOne', this.weaponOneMain.type);
+        eventEmitter.emit('weaponTwo', this.weaponTwoMain.type);
+        eventEmitter.emit('activeWeapon', this.weaponInUse);
+        
+    }
+
+
+
     setUpWeapons() {
         this.weaponOneMain = new Weapon(this);
         this.weaponOneMain.chooseWeapon(WeaponConst.TYPE_BLASTER);
@@ -37,8 +51,13 @@ class Player extends Phaser.Physics.Arcade.Sprite {
         this.weaponTwoMain.chooseWeapon(WeaponConst.TYPE_GRENADE);
         this.weaponTwoSecondary = new Weapon(this);
         this.weaponTwoSecondary.chooseWeapon(WeaponConst.TYPE_GRENADE_BIG);
+        
     }
 
+    allowSwitch() {
+        console.log(this.allowSwitch = true);
+        console.log("hallo");
+    }
 
     setUpControls() {
         this.key_W = this.scene.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.W);
@@ -51,7 +70,7 @@ class Player extends Phaser.Physics.Arcade.Sprite {
         this.key_SPACE = this.scene.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.SPACE);
     }
     
-    setUpAnimations() { //ggf. auslagern in eigene Klasse.
+    setUpAnimations() { //auslagern in eigene Klasse.
         this.scene.anims.create({
             key: 'left',
             frames: this.anims.generateFrameNumbers(this.key, { start: 0, end: 3 }),
@@ -88,6 +107,10 @@ class Player extends Phaser.Physics.Arcade.Sprite {
 
 
     playerControlUpdate() {
+        if (this.setUIOnce) {
+            this.setUpUI();
+            this.setUIOnce = false;
+        }
         //movement
         if (this.key_A.isDown) {
             this.setVelocityX(this.pace * -1);
@@ -135,8 +158,13 @@ class Player extends Phaser.Physics.Arcade.Sprite {
         }
 
         if (Phaser.Input.Keyboard.JustDown(this.key_C)) {
-            if (this.weaponTwoMain != null) {
+            if (this.weaponCD > this.scene.time.now) { return; } // big shot
+            else {
                 this.weaponInUse = this.weaponInUse * -1;
+                eventEmitter.emit('activeWeapon', this.weaponInUse);
+                eventEmitter.emit('weaponCD', this.weaponCooldown);
+                this.scene.time.addEvent(this.timedEvent);
+                this.weaponCD = this.scene.time.now + this.weaponCooldown;
             }
         }
 
